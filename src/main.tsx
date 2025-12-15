@@ -6,11 +6,17 @@ import { ConvexReactClient } from "convex/react";
 import { StrictMode, useEffect, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { WagmiProvider } from 'wagmi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { config } from './lib/wagmi'
 import "./index.css";
 import "./types/global.d.ts";
 
+const queryClient = new QueryClient()
+
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
+const Arena = lazy(() => import("./pages/Arena.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
@@ -24,8 +30,6 @@ function RouteLoading() {
 }
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
-
-
 
 function RouteSyncer() {
   const location = useLocation();
@@ -50,24 +54,28 @@ function RouteSyncer() {
   return null;
 }
 
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <VlyToolbar />
     <InstrumentationProvider>
-      <ConvexAuthProvider client={convex}>
-        <BrowserRouter>
-          <RouteSyncer />
-          <Suspense fallback={<RouteLoading />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<AuthPage redirectAfterAuth="/" />} /> {/* TODO: change redirect after auth to correct page */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <Toaster />
-      </ConvexAuthProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <ConvexAuthProvider client={convex}>
+            <BrowserRouter>
+              <RouteSyncer />
+              <Suspense fallback={<RouteLoading />}>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/arena" element={<Arena />} />
+                  <Route path="/auth" element={<AuthPage redirectAfterAuth="/arena" />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+            <Toaster />
+          </ConvexAuthProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </InstrumentationProvider>
   </StrictMode>,
 );
