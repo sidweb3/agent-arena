@@ -4,6 +4,7 @@ import { Wallet, LogOut, Loader2, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
 import { useLinera } from '@/contexts/LineraContext'
+import { Badge } from '@/components/ui/badge'
 
 export function WalletConnect() {
   const { address, isConnected: isWagmiConnected } = useAccount()
@@ -16,7 +17,8 @@ export function WalletConnect() {
     account: lineraAccount, 
     connect: connectLinera, 
     disconnect: disconnectLinera,
-    isLoading: isLineraLoading 
+    isLoading: isLineraLoading,
+    isMock: isLineraMock
   } = useLinera()
 
   useEffect(() => {
@@ -70,6 +72,9 @@ export function WalletConnect() {
         >
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20 text-sm font-mono">
             <span className="text-xs text-muted-foreground uppercase">{isLineraConnected ? 'Linera' : 'EVM'}</span>
+            {isLineraConnected && isLineraMock && (
+              <Badge variant="secondary" className="h-4 px-1 text-[10px]">MOCK</Badge>
+            )}
             <span className="w-px h-3 bg-primary/20" />
             {(isLineraConnected ? lineraAccount : address)?.slice(0, 6)}...{(isLineraConnected ? lineraAccount : address)?.slice(-4)}
           </div>

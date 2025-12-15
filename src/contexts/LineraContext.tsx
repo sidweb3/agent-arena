@@ -9,6 +9,7 @@ interface LineraContextType {
   disconnect: () => void;
   isLoading: boolean;
   error: string | null;
+  isMock: boolean;
 }
 
 const LineraContext = createContext<LineraContextType | undefined>(undefined);
@@ -24,10 +25,12 @@ export function LineraProvider({ children }: { children: ReactNode }) {
   const [chainId, setChainId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isMock, setIsMock] = useState(false);
 
   const connect = async () => {
     setIsLoading(true);
     setError(null);
+    setIsMock(false);
     try {
       console.log("Initializing Linera connection...");
       
@@ -55,12 +58,14 @@ export function LineraProvider({ children }: { children: ReactNode }) {
            setAccount(accounts[0]);
            setChainId("linera-mainnet"); // or fetch from provider
            setIsConnected(true);
+           setIsMock(false);
            return;
         }
       }
 
       // Fallback to mock if no provider found (for dev/demo)
       // Simulating connection for UI feedback
+      console.warn("Linera wallet not found. Falling back to mock connection.");
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Mock data for now
@@ -68,6 +73,7 @@ export function LineraProvider({ children }: { children: ReactNode }) {
       setAccount(mockAccount);
       setChainId("linera-testnet");
       setIsConnected(true);
+      setIsMock(true);
       
     } catch (err) {
       console.error("Failed to connect to Linera:", err);
@@ -81,10 +87,11 @@ export function LineraProvider({ children }: { children: ReactNode }) {
     setAccount(null);
     setChainId(null);
     setIsConnected(false);
+    setIsMock(false);
   };
 
   return (
-    <LineraContext.Provider value={{ isConnected, account, chainId, connect, disconnect, isLoading, error }}>
+    <LineraContext.Provider value={{ isConnected, account, chainId, connect, disconnect, isLoading, error, isMock }}>
       {children}
     </LineraContext.Provider>
   );
@@ -102,7 +109,8 @@ export function useLinera() {
       connect: async () => {},
       disconnect: () => {},
       isLoading: false,
-      error: 'Context not found'
+      error: 'Context not found',
+      isMock: false
     };
   }
   return context;

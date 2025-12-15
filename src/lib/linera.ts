@@ -11,6 +11,17 @@ export const LINERA_CONFIG = {
 };
 
 /**
+ * Validates if a string is a potential Linera address
+ * @param address The address string to check
+ * @returns true if valid format
+ */
+export function isValidLineraAddress(address: string): boolean {
+  // Basic validation: starts with linera: or is a hex string of sufficient length
+  // Adjust based on actual Linera address format
+  return address.startsWith('linera:') || (address.length > 10 && !address.includes(' '));
+}
+
+/**
  * Executes a mutation operation on a Linera application
  * @param applicationId The ID of the application to interact with
  * @param operation The operation payload (usually a JSON object or string)
