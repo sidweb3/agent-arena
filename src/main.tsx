@@ -11,11 +11,26 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { config } from './lib/wagmi'
 import "./index.css";
 import "./types/global.d.ts";
-import { WalletSync } from "./components/WalletSync";
+import { WalletSync } from "@/components/WalletSync";
 import Arena from "./pages/Arena.tsx";
-import { LineraProvider } from "./contexts/LineraContext";
+import { LineraProvider } from "@/contexts/LineraContext";
 
 const queryClient = new QueryClient()
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+          <ConvexAuthProvider client={convex}>
+            <LineraProvider>
+              <WalletSync />
+              <BrowserRouter>
+                <RouteSyncer />
+                <Suspense fallback={<RouteLoading />}>
+=======
+          <ConvexAuthProvider client={convex}>
+            <LineraProvider>
+              <BrowserRouter>
+                <WalletSync />
+                <RouteSyncer />
+                <Suspense fallback={<RouteLoading />}>
 
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));

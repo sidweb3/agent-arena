@@ -14,6 +14,11 @@ interface LineraContextType {
 const LineraContext = createContext<LineraContextType | undefined>(undefined);
 
 export function LineraProvider({ children }: { children: ReactNode }) {
+  // Add debug log
+  React.useEffect(() => {
+    console.log("LineraProvider mounted");
+  }, []);
+
   const [isConnected, setIsConnected] = useState(false);
   const [account, setAccount] = useState<string | null>(null);
   const [chainId, setChainId] = useState<string | null>(null);

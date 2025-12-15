@@ -6,7 +6,19 @@ import { useLinera } from '@/contexts/LineraContext';
 
 export function WalletSync() {
   const { address, isConnected: isWagmiConnected } = useAccount();
-  const { account: lineraAccount, isConnected: isLineraConnected } = useLinera();
+  
+  // Safely access Linera context
+  let lineraAccount = null;
+  let isLineraConnected = false;
+  
+  try {
+    const linera = useLinera();
+    lineraAccount = linera.account;
+    isLineraConnected = linera.isConnected;
+  } catch (e) {
+    console.error("WalletSync: Failed to get Linera context", e);
+  }
+
   const storeUser = useMutation(api.users.storeUser);
 
   useEffect(() => {
