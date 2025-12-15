@@ -7,9 +7,18 @@ const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'demo-project
 export const config = createConfig({
   chains: [mainnet, sepolia],
   connectors: [
-    walletConnect({ projectId }),
-    injected(),
-    coinbaseWallet({ appName: 'Agent Arena' }),
+    injected({ shimDisconnect: true }),
+    walletConnect({ 
+      projectId,
+      showQrModal: true,
+      qrModalOptions: {
+        themeMode: 'dark',
+      }
+    }),
+    coinbaseWallet({ 
+      appName: 'Agent Arena',
+      darkMode: true,
+    }),
   ],
   transports: {
     [mainnet.id]: http(),
