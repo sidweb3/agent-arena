@@ -29,14 +29,21 @@ export function LineraProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     setError(null);
     try {
-      // Placeholder for actual Linera connection logic
-      // We will need to replace this with the actual @linera/web.js implementation
-      // once we have the specific API details or documentation.
       console.log("Initializing Linera connection...");
       
-      // TODO: Integrate @linera/web.js Client here
-      // const client = new Client(...);
-      
+      // Check for injected Linera provider
+      if (typeof window !== 'undefined' && (window as any).linera) {
+        const provider = (window as any).linera;
+        const accounts = await provider.request({ method: 'eth_requestAccounts' }); // Assuming standard interface or similar
+        if (accounts && accounts.length > 0) {
+           setAccount(accounts[0]);
+           setChainId("linera-mainnet"); // or fetch from provider
+           setIsConnected(true);
+           return;
+        }
+      }
+
+      // Fallback to mock if no provider found (for dev/demo)
       // Simulating connection for UI feedback
       await new Promise(resolve => setTimeout(resolve, 1000));
       
