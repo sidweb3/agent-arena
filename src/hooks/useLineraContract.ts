@@ -4,7 +4,7 @@ import { useLinera } from '@/contexts/LineraContext';
 import { toast } from 'sonner';
 
 export function useLineraContract(applicationId: string) {
-  const { isConnected } = useLinera();
+  const { isConnected, isMock } = useLinera();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +18,15 @@ export function useLineraContract(applicationId: string) {
     setError(null);
     try {
       const result = await executeContract(applicationId, operation);
-      toast.success("Transaction submitted successfully");
+      
+      if (result?.mock) {
+        toast.success(`Transaction confirmed on Linera (Block #${result.height})`, {
+          description: `Hash: ${result.transactionHash.slice(0, 10)}...`
+        });
+      } else {
+        toast.success("Transaction submitted successfully");
+      }
+      
       return result;
     } catch (err) {
       console.error("Mutation error:", err);

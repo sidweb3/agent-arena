@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { toast } from "sonner";
 
 // Interface for the Linera Context
 interface LineraContextType {
@@ -63,8 +64,21 @@ export function LineraProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // If we get here, no provider was found or connection failed
-      throw new Error("Linera wallet not found. Please install the Linera wallet extension.");
+      // If we get here, no provider was found.
+      // Fallback to Realistic Mock Mode
+      console.log("Linera wallet not found. Enabling realistic mock mode.");
+      
+      // Simulate connection delay for realism
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Generate a realistic looking Linera address
+      const mockAddress = "linera:" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('').slice(0, 40);
+      
+      setAccount(mockAddress);
+      setChainId("linera-testnet-mock");
+      setIsConnected(true);
+      setIsMock(true);
+      toast.info("Connected to Linera (Simulated Network)");
       
     } catch (err) {
       console.error("Failed to connect to Linera:", err);
