@@ -1,0 +1,7 @@
+{
+  "file_paths": [
+    "src/convex/_generated/api.js",
+    "src/convex/_generated/api.d.ts"
+  ],
+  "replace_files_in_context": false
+}
