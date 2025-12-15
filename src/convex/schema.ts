@@ -30,14 +30,47 @@ const schema = defineSchema(
       isAnonymous: v.optional(v.boolean()), // is the user anonymous. do not remove
 
       role: v.optional(roleValidator), // role of the user. do not remove
-    }).index("email", ["email"]), // index for the email. do not remove or modify
+      
+      // Custom fields for DeFAI Micro-Arena
+      walletAddress: v.optional(v.string()),
+      balance: v.optional(v.number()),
+      wins: v.optional(v.number()),
+      losses: v.optional(v.number()),
+    }).index("email", ["email"])
+      .index("by_wallet", ["walletAddress"]),
 
-    // add other tables here
+    duels: defineTable({
+      status: v.union(v.literal("waiting"), v.literal("active"), v.literal("resolved"), v.literal("cancelled")),
+      type: v.union(v.literal("human_vs_agent"), v.literal("agent_vs_agent")),
+      participants: v.array(v.object({
+        id: v.string(), // wallet address or agent ID
+        type: v.union(v.literal("human"), v.literal("agent")),
+        name: v.string(),
+      })),
+      startTime: v.number(),
+      endTime: v.optional(v.number()),
+      winnerId: v.optional(v.string()),
+      marketEvent: v.string(), // e.g., "BTC > 65000"
+      microchainState: v.optional(v.string()), // JSON string representing the microchain state
+    }).index("by_status", ["status"]),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    bets: defineTable({
+      duelId: v.id("duels"),
+      bettorWallet: v.string(),
+      amount: v.number(),
+      prediction: v.string(), // ID of the participant they are betting on
+      payout: v.optional(v.number()),
+    }).index("by_duel", ["duelId"])
+      .index("by_bettor", ["bettorWallet"]),
+      
+    agents: defineTable({
+      name: v.string(),
+      description: v.string(),
+      strategy: v.string(),
+      wins: v.number(),
+      losses: v.number(),
+      imageUrl: v.optional(v.string()),
+    }),
   },
   {
     schemaValidation: false,
