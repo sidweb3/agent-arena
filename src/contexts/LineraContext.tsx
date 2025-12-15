@@ -93,7 +93,17 @@ export function LineraProvider({ children }: { children: ReactNode }) {
 export function useLinera() {
   const context = useContext(LineraContext);
   if (context === undefined) {
-    throw new Error('useLinera must be used within a LineraProvider');
+    // Fallback to prevent crashes if used outside provider, but log error
+    console.error('useLinera must be used within a LineraProvider');
+    return {
+      isConnected: false,
+      account: null,
+      chainId: null,
+      connect: async () => {},
+      disconnect: () => {},
+      isLoading: false,
+      error: 'Context not found'
+    };
   }
   return context;
 }

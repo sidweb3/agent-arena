@@ -2,7 +2,6 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { Button } from '@/components/ui/button'
 import { Wallet, LogOut, Loader2, Zap } from 'lucide-react'
 import { toast } from 'sonner'
-import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { useLinera } from '@/contexts/LineraContext'
 
@@ -66,9 +65,7 @@ export function WalletConnect() {
   return (
     <div className="relative">
       {((isWagmiConnected && address) || (isLineraConnected && lineraAccount)) ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+        <div
           className="flex items-center gap-2"
         >
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20 text-sm font-mono">
@@ -84,7 +81,7 @@ export function WalletConnect() {
           >
             <LogOut className="h-4 w-4" />
           </Button>
-        </motion.div>
+        </div>
       ) : (
         <div className="flex gap-2">
           <Button
